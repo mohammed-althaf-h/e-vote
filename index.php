@@ -48,6 +48,7 @@ session_start();
             gap: 1rem;
             padding: 0;
             margin: 0;
+            align-items: center; /* Align items vertically centered */
         }
 
         .hero {
@@ -108,6 +109,45 @@ session_start();
         .footer p {
             margin: 0;
         }
+
+        .profile {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .profile .profile-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #ffffff;
+            color: #000000;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 0.375rem;
+        }
+
+        .profile .profile-menu a {
+            color: #000000;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .profile .profile-menu a:hover {
+            background-color: #ddd;
+        }
+
+        .profile:hover .profile-menu {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -140,18 +180,21 @@ session_start();
                     $admin_check_stmt->close();
                     ?>
 
-                    <?php if ($is_admin): ?>
-                        <!-- Navigation items for admins -->
-                        <li><a href="./admin/">Dashboard</a></li>
-                    <?php endif; ?>
-                    <li><a href="logout.php">Logout</a></li>
+                    <li class="profile">
+                        <img src="https://static.vecteezy.com/system/resources/previews/036/280/650/original/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg" alt="Profile Photo">
+                        <div class="profile-menu">
+                            <a href="edit_profile.php">Edit Profile</a>
+                            <?php if ($is_admin): ?>
+                                <a href="./admin/">Admin Panel</a>
+                            <?php endif; ?>
+                            <a href="logout.php">Logout</a>
+                        </div>
+                    </li>
                 <?php else: ?>
                     <!-- Navigation items for non-logged-in users -->
                     <li><a href="./auth/login.php">Login</a></li>
                     <li><a href="./auth/register.php">Register</a></li>
                 <?php endif; ?> 
-                <!-- Common navigation item -->
-                <li><a href="./voting/results.php">Results</a></li>
             </ul>
         </div>
     </nav>
