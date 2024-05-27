@@ -4,49 +4,69 @@ include '../includes/db.php';
 include '../includes/csrf.php'; // Include the CSRF functions
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) {
+    // CSRF token validation
     if (!validateCsrfToken($_POST['csrf_token'])) {
         die("CSRF token validation failed");
     }
 
+    // Sanitize and trim input data
+    $name = trim($_POST['name']);
     $registerno = trim($_POST['registerno']);
     $password = trim($_POST['password']);
     $email = trim($_POST['email']);
 
-    // Generate verification code
+    // Default profile photo path
+    $defaultProfilePhoto = "../uploads/profile_photos/default.png";
+    $profile_photo_path = $defaultProfilePhoto;
+
+    // Handle profile photo upload
+    if (isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] == 0) {
+        $target_dir = "../uploads/profile_photos/";
+        $target_file = $target_dir . basename($_FILES["profile_photo"]["name"]);
+        if (move_uploaded_file($_FILES["profile_photo"]["tmp_name"], $target_file)) {
+            $profile_photo_path = $target_file;
+        }
+    }
+
+    // Generate a verification code
     $verificationCode = bin2hex(random_bytes(16)); // Generate a 32-character hexadecimal string
 
     // Hash the password
     $hashedpass = password_hash($password, PASSWORD_BCRYPT);
 
     // Prepare the SQL statement
-    $sql = "INSERT INTO users (registerno, password, email, verification_code) VALUES (?, ?, ?, ?)";
+    $sql = "INSERT INTO users (name, registerno, password, email, verification_code, profile_photo) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-
-    // Bind parameters
-    $stmt->bind_param("ssss", $registerno, $hashedpass, $email, $verificationCode);
-
-    // Execute query
-    if ($stmt->execute()) {
-        // Send verification email
-        $to = $email;
-        $subject = "Verify Your Email";
-        $message = "Click the following link to verify your email: http://inilax.com/auth/verify.php?code=$verificationCode";
-        $headers = "From: your@example.com" . "\r\n" .
-                   "Reply-To: your@example.com" . "\r\n" .
-                   "X-Mailer: PHP/" . phpversion();
-
-        if (mail($to, $subject, $message, $headers)) {
-            echo "User registered successfully. Please verify your email.";
-        } else {
-            echo "Error sending verification email. Debug info: " . print_r(error_get_last(), true);
-        }
-    } else {
-        echo "Error registering user: " . $stmt->error;
-    }
     
-    // Close statement
-    $stmt->close();
+    // Check if the statement was prepared successfully
+    if ($stmt) {
+        // Bind parameters
+        $stmt->bind_param("ssssss", $name, $registerno, $hashedpass, $email, $verificationCode, $profile_photo_path);
+
+        // Execute query and check for success
+        if ($stmt->execute()) {
+            // Send verification email
+            $to = $email;
+            $subject = "Verify Your Email";
+            $message = "Click the following link to verify your email: http://inilax.com/auth/verify.php?code=$verificationCode";
+            $headers = "From: your@example.com\r\nReply-To: your@example.com\r\nX-Mailer: PHP/" . phpversion();
+
+            if (mail($to, $subject, $message, $headers)) {
+                echo "User registered successfully. Please verify your email.";
+            } else {
+                echo "Error sending verification email.";
+            }
+        } else {
+            echo "Error registering user: " . $stmt->error;
+        }
+        
+        // Close statement
+        $stmt->close();
+    } else {
+        echo "Error preparing statement: " . $conn->error;
+    }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -72,20 +92,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) {
                     <img src="../assets/images/img-01.png" alt="IMG">
                 </div>
 
-                <form class="login100-form validate-form" action="register.php" method="POST">
+                <form class="login100-form validate-form" action="register.php" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                     <span class="login100-form-title">
                         User Registration
                     </span>
 
-                    <div class="wrap-input100 validate-input" data-validate="Valid register number is required">
-                        <input class="input100" type="text" name="registerno" placeholder="Register Number" required>
+                    <div class="wrap-input100 validate-input" data-validate="Valid name is required">
+                        <input class="input100" type="text" name="name" placeholder="Name" required>
                         <span class="focus-input100"></span>
                         <span class="symbol-input100">
                             <i class="fa fa-user" aria-hidden="true"></i>
                         </span>
                     </div>
-                    
+
+                    <div class="wrap-input100 validate-input" data-validate="Valid register number is required">
+                        <input class="input100" type="text" name="registerno" placeholder="Register Number" required>
+                        <span class="focus-input100"></span>
+                        <span class="symbol-input100">
+                            <i class="fa fa-id-badge" aria-hidden="true"></i>
+                        </span>
+                    </div>
+
                     <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
                         <input class="input100" type="email" name="email" placeholder="Email" required>
                         <span class="focus-input100"></span>
@@ -99,6 +127,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) {
                         <span class="focus-input100"></span>
                         <span class="symbol-input100">
                             <i class="fa fa-lock" aria-hidden="true"></i>
+                        </span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate="Profile photo is optional">
+                        <input class="input100" type="file" name="profile_photo" accept="image/*">
+                        <span class="focus-input100"></span>
+                        <span class="symbol-input100">
+                            <i class="fa fa-camera" aria-hidden="true"></i>
                         </span>
                     </div>
                     

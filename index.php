@@ -167,7 +167,7 @@ session_start();
                     $is_admin = false;
 
                     // Check if the user is an admin
-                    $admin_check_sql = "SELECT isadmin FROM users WHERE registerno = ?";
+                    $admin_check_sql = "SELECT isadmin, profile_photo FROM users WHERE registerno = ?";
                     $admin_check_stmt = $conn->prepare($admin_check_sql);
                     $admin_check_stmt->bind_param("s", $registerno);
                     $admin_check_stmt->execute();
@@ -177,11 +177,16 @@ session_start();
                     if ($admin_row && $admin_row['isadmin'] == 1) {
                         $is_admin = true;
                     }
+                    $profile_photo = $admin_row['profile_photo'];
                     $admin_check_stmt->close();
                     ?>
 
+                    <?php if ($is_admin): ?>
+                        <!-- Navigation items for admins -->
+                        <li><a href="./admin/">Dashboard</a></li>
+                    <?php endif; ?>
                     <li class="profile">
-                        <img src="https://static.vecteezy.com/system/resources/previews/036/280/650/original/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg" alt="Profile Photo">
+                        <img src="<?php echo htmlspecialchars($profile_photo); ?>" alt="Profile Photo">
                         <div class="profile-menu">
                             <a href="edit_profile.php">Edit Profile</a>
                             <?php if ($is_admin): ?>
@@ -195,6 +200,8 @@ session_start();
                     <li><a href="./auth/login.php">Login</a></li>
                     <li><a href="./auth/register.php">Register</a></li>
                 <?php endif; ?> 
+                <!-- Common navigation item -->
+                <li><a href="./voting/results.php">Results</a></li>
             </ul>
         </div>
     </nav>
