@@ -188,7 +188,7 @@ session_start();
                     <li class="profile">
                         <img src="<?php echo htmlspecialchars($profile_photo); ?>" alt="Profile Photo">
                         <div class="profile-menu">
-                            <a href="edit_profile.php">Edit Profile</a>
+                            <a href="view_profile.php">My Profile</a>
                             <?php if ($is_admin): ?>
                                 <a href="./admin/">Admin Panel</a>
                             <?php endif; ?>
