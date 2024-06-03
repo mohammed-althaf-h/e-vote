@@ -4,12 +4,46 @@ include '../includes/db.php';
 // Handle delete candidate request
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_candidate'])) {
     $candidate_id = $_POST['candidate_id'];
-    $sql = "DELETE FROM candidates WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $candidate_id);
-    $stmt->execute();
-    $stmt->close();
-    echo json_encode(['success' => true]);
+
+    // Start transaction
+    $conn->begin_transaction();
+
+    try {
+        // Get the candidate's register number
+        $sql = "SELECT u.registerno FROM users u 
+                INNER JOIN candidates c ON u.registerno = c.registerno 
+                WHERE c.id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $candidate_id);
+        $stmt->execute();
+        $stmt->bind_result($registerno);
+        $stmt->fetch();
+        $stmt->close();
+
+        // Delete from candidates table
+        $sql = "DELETE FROM candidates WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $candidate_id);
+        $stmt->execute();
+        $stmt->close();
+
+        // Delete from users table
+        $sql = "DELETE FROM users WHERE registerno = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $registerno);
+        $stmt->execute();
+        $stmt->close();
+
+        // Commit transaction
+        $conn->commit();
+
+        echo json_encode(['success' => true]);
+    } catch (Exception $e) {
+        // Rollback transaction
+        $conn->rollback();
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    }
+
     exit();
 }
 
@@ -26,6 +60,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_candidate'])) {
     $stmt->execute();
     $stmt->close();
     echo json_encode(['success' => true]);
+    exit();
+}
+
+// Handle regenerate password request
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['regenerate_password'])) {
+    $candidate_id = $_POST['candidate_id'];
+
+    // Generate a new random password
+    $password = bin2hex(random_bytes(4)); // Generate a random 8-character password
+    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+    // Update the user's password in the database
+    $sql = "UPDATE users SET password = ? WHERE registerno = (SELECT registerno FROM candidates WHERE id = ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $hashed_password, $candidate_id);
+    $stmt->execute();
+    $stmt->close();
+
+    echo json_encode(['success' => true, 'password' => $password]);
     exit();
 }
 
@@ -87,6 +140,7 @@ $conn->close();
                 <td>
                     <button class="btn btn-danger delete-candidate" data-id="<?php echo htmlspecialchars($candidate['id']); ?>">Delete</button>
                     <button class="btn btn-primary" onclick="editCandidate('<?php echo htmlspecialchars($candidate['id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['name'])); ?>', '<?php echo htmlspecialchars($candidate['position_id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['image_url'])); ?>')">Edit</button>
+                    <button class="btn btn-warning regenerate-password" data-id="<?php echo htmlspecialchars($candidate['id']); ?>">Regenerate Password</button>
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -149,8 +203,13 @@ $(document).ready(function() {
                 delete_candidate: true
             },
             success: function(response) {
-                showNotification('Candidate deleted successfully');
-                $('#candidate-' + candidate_id).remove();
+                var res = JSON.parse(response);
+                if (res.success) {
+                    showNotification('Candidate deleted successfully');
+                    $('#candidate-' + candidate_id).remove();
+                } else {
+                    showNotification('Error deleting candidate: ' + res.error);
+                }
             },
             error: function() {
                 showNotification('Error deleting candidate');
@@ -185,6 +244,29 @@ $(document).ready(function() {
             },
             error: function() {
                 showNotification('Error updating candidate');
+            }
+        });
+    });
+
+    $('.regenerate-password').click(function() {
+        var candidate_id = $(this).data('id');
+        $.ajax({
+            type: 'POST',
+            url: 'manage_candidates.php',
+            data: {
+                candidate_id: candidate_id,
+                regenerate_password: true
+            },
+            success: function(response) {
+                var res = JSON.parse(response);
+                if (res.success) {
+                    showNotification('Password regenerated successfully. New Password: ' + res.password);
+                } else {
+                    showNotification('Error regenerating password');
+                }
+            },
+            error: function() {
+                showNotification('Error regenerating password');
             }
         });
     });
