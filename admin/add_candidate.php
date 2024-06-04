@@ -6,6 +6,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $position_id = $_POST['position_id'];
     $image_url = $_POST['image_url'];
 
+    // Set default image URL if none is provided
+    if (empty($image_url)) {
+        $image_url = './uploads/profile_photos/default.png';
+    }
+
     // Begin transaction
     $conn->begin_transaction();
 
@@ -31,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
 
         // Insert the new user into the users table
-        $sql = "INSERT INTO users (name, registerno, password, email, isadmin, eligible, verified) VALUES (?, ?, ?, '', 0, 1, 1)";
+        $sql = "INSERT INTO users (name, registerno, password, email, isadmin, eligible, verified, iscand) VALUES (?, ?, ?, '', 0, 1, 1, 1)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("sss", $name, $registerno, $hashed_password);
         $stmt->execute();
