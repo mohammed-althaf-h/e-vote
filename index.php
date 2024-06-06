@@ -152,10 +152,10 @@ session_start();
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">E-Voting System</div>
+        <div class="logo"><a href="index.php">E-Voting System</div>
         <div>
             <ul>
-                <li><a href="../index.php">Home</a></li>
+                <li><a href="index.php">Home</a></li>
                 <?php if (isset($_SESSION['registerno'])): ?>
                     <li><a href="./voting/voting.php">Vote</a></li>
                     <?php
