@@ -83,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['regenerate_password'])
 }
 
 // Retrieve candidates from the database
-$sql = "SELECT c.id, c.name, c.image_url, p.name AS position_name, p.id AS position_id 
+$sql = "SELECT c.id, c.name, c.image_url, c.registerno, p.name AS position_name, p.id AS position_id 
         FROM candidates c 
         INNER JOIN positions p ON c.position_id = p.id";
 $result = $conn->query($sql);
@@ -125,6 +125,7 @@ $conn->close();
     <table class="table table-bordered">
         <thead>
             <tr>
+                <th>Candidate Number</th>
                 <th>Name</th>
                 <th>Position</th>
                 <th>Image URL</th>
@@ -134,6 +135,7 @@ $conn->close();
         <tbody>
             <?php foreach ($candidates as $candidate): ?>
             <tr id="candidate-<?php echo htmlspecialchars($candidate['id']); ?>">
+                <td class="candidate-registerno"><?php echo htmlspecialchars($candidate['registerno']); ?></td>
                 <td class="candidate-name"><?php echo htmlspecialchars($candidate['name']); ?></td>
                 <td class="candidate-position"><?php echo htmlspecialchars($candidate['position_name']); ?></td>
                 <td class="candidate-image-url"><?php echo htmlspecialchars($candidate['image_url']); ?></td>
@@ -240,6 +242,7 @@ $(document).ready(function() {
                 row.find('.candidate-name').text(name);
                 row.find('.candidate-position').text($('#edit_position_id option:selected').text());
                 row.find('.candidate-image-url').text(image_url);
+                row.find('.candidate-registerno').text(candidate_id);  // Assuming candidate_id is same as registerno
                 $('#editForm').hide();
             },
             error: function() {

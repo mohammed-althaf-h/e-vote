@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
     $registerno = trim($_POST['registerno']);
     $password = trim($_POST['password']);
 
-    $sql = "SELECT verified, password, isadmin FROM users WHERE registerno = ?";
+    $sql = "SELECT verified, password, isadmin, iscand FROM users WHERE registerno = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $registerno);
     $stmt->execute();
@@ -33,8 +33,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
         if ($row['verified'] == 1 && password_verify($password, $row['password'])) {
             $_SESSION['registerno'] = $registerno;
             $_SESSION['isadmin'] = $row['isadmin'];
+            $_SESSION['iscand'] = $row['iscand']; 
             if ($row['isadmin'] == 1) {
                 header("Location: ../admin/");
+            }elseif ($row['iscand'] == 1) {
+                header("Location: ../candidate.php");
             } else {
                 header("Location: ../index.php");
             }
