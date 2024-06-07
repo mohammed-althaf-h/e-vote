@@ -1,4 +1,4 @@
-<?php include 'header.php'; ?>
+<!-- <?php include 'header.php'; ?> -->
 
 <div class="container" id="tab-dashboard">
     <h1>Dashboard</h1>

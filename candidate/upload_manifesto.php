@@ -1,5 +1,16 @@
 <?php
+// Enable error reporting
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Start the session at the beginning
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 include 'header.php';
+// include '../includes/csrf.php'; // Ensure this path is correct
 
 // Process form submission for manifesto upload
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['upload_manifesto'])) {
@@ -21,14 +32,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['upload_manifesto'])) {
                 // Save the manifesto file path to the database
                 $sql = "UPDATE candidates SET manifesto = ? WHERE registerno = ?";
                 $stmt = $conn->prepare($sql);
+                if (!$stmt) {
+                    echo "Prepare statement failed: " . $conn->error;
+                    exit;
+                }
                 $stmt->bind_param("ss", $target_file, $_SESSION['registerno']);
-                $stmt->execute();
+                if ($stmt->execute()) {
+                    echo "The file " . htmlspecialchars(basename($_FILES["manifesto_file"]["name"])) . " has been uploaded.";
+                } else {
+                    echo "Execute statement failed: " . $stmt->error;
+                }
                 $stmt->close();
-                echo "The file " . htmlspecialchars(basename($_FILES["manifesto_file"]["name"])) . " has been uploaded.";
             } else {
                 echo "Sorry, there was an error uploading your file.";
             }
         }
+    } else {
+        echo "File upload error: " . $_FILES['manifesto_file']['error'];
     }
 }
 ?>
