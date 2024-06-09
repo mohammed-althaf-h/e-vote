@@ -110,6 +110,7 @@ if ($result->num_rows > 0) {
 $conn->close();
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,6 +123,7 @@ $conn->close();
 <body>
 <div class="container mt-5">
     <h2>Manage Candidates</h2>
+    <div id="notification" class="alert alert-success" style="display: none;"></div>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -190,33 +192,40 @@ function editCandidate(id, name, position_id, image_url) {
     $('#editForm').show();
 }
 
-function showNotification(message) {
-    alert(message);
+function showNotification(message, type = 'success') {
+    var notification = $('#notification');
+    notification.removeClass('alert-success alert-danger').addClass('alert-' + type);
+    notification.text(message).show();
+    setTimeout(function() {
+        notification.fadeOut();
+    }, 3000);
 }
 
 $(document).ready(function() {
     $('.delete-candidate').click(function() {
         var candidate_id = $(this).data('id');
-        $.ajax({
-            type: 'POST',
-            url: 'manage_candidates.php',
-            data: {
-                candidate_id: candidate_id,
-                delete_candidate: true
-            },
-            success: function(response) {
-                var res = JSON.parse(response);
-                if (res.success) {
-                    showNotification('Candidate deleted successfully');
-                    $('#candidate-' + candidate_id).remove();
-                } else {
-                    showNotification('Error deleting candidate: ' + res.error);
+        if (confirm('Are you sure you want to delete this candidate?')) {
+            $.ajax({
+                type: 'POST',
+                url: 'manage_candidates.php',
+                data: {
+                    candidate_id: candidate_id,
+                    delete_candidate: true
+                },
+                success: function(response) {
+                    var res = JSON.parse(response);
+                    if (res.success) {
+                        showNotification('Candidate deleted successfully');
+                        $('#candidate-' + candidate_id).remove();
+                    } else {
+                        showNotification('Error deleting candidate: ' + res.error, 'danger');
+                    }
+                },
+                error: function() {
+                    showNotification('Error deleting candidate', 'danger');
                 }
-            },
-            error: function() {
-                showNotification('Error deleting candidate');
-            }
-        });
+            });
+        }
     });
 
     $('#editCandidateForm').submit(function(e) {
@@ -242,11 +251,10 @@ $(document).ready(function() {
                 row.find('.candidate-name').text(name);
                 row.find('.candidate-position').text($('#edit_position_id option:selected').text());
                 row.find('.candidate-image-url').text(image_url);
-                row.find('.candidate-registerno').text(candidate_id);  // Assuming candidate_id is same as registerno
                 $('#editForm').hide();
             },
             error: function() {
-                showNotification('Error updating candidate');
+                showNotification('Error updating candidate', 'danger');
             }
         });
     });
@@ -265,11 +273,11 @@ $(document).ready(function() {
                 if (res.success) {
                     showNotification('Password regenerated successfully. New Password: ' + res.password);
                 } else {
-                    showNotification('Error regenerating password');
+                    showNotification('Error regenerating password', 'danger');
                 }
             },
             error: function() {
-                showNotification('Error regenerating password');
+                showNotification('Error regenerating password', 'danger');
             }
         });
     });

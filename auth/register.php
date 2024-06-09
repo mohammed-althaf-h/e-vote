@@ -130,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register'])) {
                         </span>
                     </div>
 
-                    <div class="wrap-input100 validate-input" data-validate="Profile photo is optional">
+                    <div class="wrap-input100">
                         <input class="input100" type="file" name="profile_photo" accept="image/*">
                         <span class="focus-input100"></span>
                         <span class="symbol-input100">

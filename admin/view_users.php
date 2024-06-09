@@ -54,7 +54,6 @@ if ($result->num_rows > 0) {
 // Close connection
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,6 +66,7 @@ $conn->close();
 <body>
     <div class="container mt-5">
         <h2>View Users</h2>
+        <div id="notification" class="alert alert-success" style="display: none;"></div>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -102,25 +102,6 @@ $conn->close();
         </table>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="notificationModalLabel">Notification</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="notificationMessage">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
@@ -146,16 +127,13 @@ $conn->close();
                         row.find('.user-verified').text(res.new_verification ? 'Yes' : 'No');
                         form.find('input[name="verified"]').val(res.new_verification);
                         form.find('.change-verification').text(res.new_verification ? 'Unverified' : 'Set Verified');
-                        $('#notificationMessage').text('Verification status changed successfully');
-                        $('#notificationModal').modal('show');
+                        showNotification('Verification status changed successfully');
                     } else {
-                        $('#notificationMessage').text('Error changing verification status');
-                        $('#notificationModal').modal('show');
+                        showNotification('Error changing verification status', 'danger');
                     }
                 },
                 error: function() {
-                    $('#notificationMessage').text('Error changing verification status');
-                    $('#notificationModal').modal('show');
+                    showNotification('Error changing verification status', 'danger');
                 }
             });
         });
@@ -181,19 +159,25 @@ $conn->close();
                         row.find('.user-eligible').text(res.new_eligibility ? 'Yes' : 'No');
                         form.find('input[name="eligible"]').val(res.new_eligibility);
                         form.find('.change-eligibility').text(res.new_eligibility ? 'Set Not Eligible' : 'Set Eligible');
-                        $('#notificationMessage').text('Eligibility status changed successfully');
-                        $('#notificationModal').modal('show');
+                        showNotification('Eligibility status changed successfully');
                     } else {
-                        $('#notificationMessage').text('Error changing eligibility status');
-                        $('#notificationModal').modal('show');
+                        showNotification('Error changing eligibility status', 'danger');
                     }
                 },
                 error: function() {
-                    $('#notificationMessage').text('Error changing eligibility status');
-                    $('#notificationModal').modal('show');
+                    showNotification('Error changing eligibility status', 'danger');
                 }
             });
         });
+
+        function showNotification(message, type = 'success') {
+            var notification = $('#notification');
+            notification.removeClass('alert-success alert-danger').addClass('alert-' + type);
+            notification.text(message).show();
+            setTimeout(function() {
+                notification.fadeOut();
+            }, 3000);
+        }
     });
     </script>
 </body>

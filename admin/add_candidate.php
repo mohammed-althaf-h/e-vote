@@ -82,6 +82,7 @@ $conn->close();
 <body>
 <div class="container mt-5">
     <h2>Add Candidate</h2>
+    <div id="notification" class="alert alert-success" style="display: none;"></div>
     <form id="addCandidateForm">
         <div class="form-group">
             <label for="name">Candidate Name:</label>
@@ -109,6 +110,15 @@ $conn->close();
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
 <script>
+function showNotification(message, type = 'success') {
+    var notification = $('#notification');
+    notification.removeClass('alert-success alert-danger').addClass('alert-' + type);
+    notification.text(message).show();
+    setTimeout(function() {
+        notification.fadeOut();
+    }, 3000);
+}
+
 $(document).ready(function() {
     $('#addCandidateForm').submit(function(e) {
         e.preventDefault();
@@ -121,14 +131,14 @@ $(document).ready(function() {
             success: function(response) {
                 var res = JSON.parse(response);
                 if (res.success) {
-                    alert('Candidate added successfully. Registration Number: ' + res.registerno + ' Password: ' + res.password);
+                    showNotification('Candidate added successfully. Registration Number: ' + res.registerno + ' Password: ' + res.password);
                     $('#addCandidateForm')[0].reset();
                 } else {
-                    alert('Error adding candidate: ' + res.error);
+                    showNotification('Error adding candidate: ' + res.error, 'danger');
                 }
             },
             error: function() {
-                alert('Error adding candidate');
+                showNotification('Error adding candidate', 'danger');
             }
         });
     });

@@ -1,6 +1,11 @@
 <?php
-include 'header.php';
-include '../includes/csrf.php';
+// Check if a session is already started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+include '../includes/db.php'; // Include your database connection
+include '../includes/csrf.php'; // Include your CSRF functions
 
 // Fetch candidate details
 $registerno = $_SESSION['registerno'];
@@ -11,22 +16,6 @@ $stmt->execute();
 $result = $stmt->get_result();
 $candidate = $result->fetch_assoc();
 $stmt->close();
-
-// Process form submission for campaign details
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_campaign'])) {
-    if (!validateCsrfToken($_POST['csrf_token'])) {
-        die("CSRF token validation failed");
-    }
-
-    $campaign_details = trim($_POST['campaign_details']);
-
-    // Save campaign details to the database
-    $sql = "UPDATE candidates SET campaign_details = ? WHERE registerno = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $campaign_details, $registerno);
-    $stmt->execute();
-    $stmt->close();
-}
 ?>
 
 <!DOCTYPE html>
@@ -36,6 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_campaign'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign Details</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             background-color: #f8f9fa;
@@ -67,16 +57,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_campaign'])) {
 <body>
     <div class="container" id="tab-campaign">
         <h1>Campaign Details</h1>
-        <form action="campaign_details.php" method="POST">
+        <form id="campaign_form" method="POST">
             <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
             <div class="form-group">
                 <label for="campaign_details">Campaign Details:</label>
-                <textarea class="form-control" name="campaign_details" id="campaign_details" rows="5" required><?php echo htmlspecialchars($candidate['campaign_details'] ?? ''); ?></textarea>
+                <textarea class="form-control" name="campaign_details" id="campaign_details" rows="5" required></textarea>
             </div>
             <div class="form-group">
                 <button class="btn btn-primary" type="submit" name="submit_campaign">Submit Campaign Details</button>
             </div>
         </form>
+        <div id="message"></div>
+        <h2>Current Campaign Details</h2>
+        <div id="current_campaign_details">
+            <?php echo htmlspecialchars($candidate['campaign_details'] ?? 'No campaign details available.'); ?>
+        </div>
     </div>
+
+    <script>
+    $(document).ready(function() {
+        $('#campaign_form').on('submit', function(event) {
+            event.preventDefault();
+            
+            var formData = $(this).serialize();
+            
+            $.ajax({
+                url: 'ajax_campaign_details.php',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    $('#message').html(response);
+                    $('#current_campaign_details').text($('#campaign_details').val());
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    $('#message').html('<p>Error: ' + textStatus + '</p>');
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>
