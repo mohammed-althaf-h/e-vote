@@ -8,7 +8,7 @@ if (isset($_SESSION['registerno'])) {
     if ($_SESSION['isadmin'] == 1) {
         header("Location: ../admin/");
     } else {
-        header("Location: ../index.php");
+        header("Location: ../home.php");
     }
     exit();
 }
