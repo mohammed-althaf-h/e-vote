@@ -110,7 +110,7 @@ $stmt_admin->close();
             font-weight: 700;
         }
         .btn-primary {
-            background-color: #4caf50;
+            background-color: #1829bb;
             border: none;
         }
         .footer {
@@ -128,7 +128,7 @@ $stmt_admin->close();
             margin-right: 2px;
         }
         .nav-tabs .nav-link.active {
-            background-color: #4caf50;
+            background-color: #1829bb;
             color: #c5cdd5  ;
         }
         @media (max-width: 767px) {
