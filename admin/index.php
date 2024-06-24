@@ -224,6 +224,13 @@ if (!$is_admin) {
                     <?php include 'manage_candidates.php'; ?>
                 </div>
             </div>
+            <div id="tab-positions" class="tab" style="display: none;">
+    <div class="height-100 bg-light">
+        <h4>Positions</h4>
+        <?php include 'add_position.php'; ?>
+    </div>
+</div>
+
             <!-- TOOLS -->
             <div id="tab-tools" class="tab">
                 <div class="height-100 bg-light">

@@ -52,14 +52,14 @@ $admin_check_stmt->close();
                 <i class='bx bx-wrench nav_icon'></i>
                 <span class="nav_name">View Users</span>
             </a>
-            <!-- Uncomment this if settings are needed -->
-            <!-- <a href="#" class="nav_link" onclick="showTab('tab-settings')">
-                <i class='bx bx-cog nav_icon'></i>
-                <span class="nav_name">Settings</span>
-            </a> -->
-			<a href="../logout.php" class="nav_link"> 
-			<i class="bx bx-log-out nav_icon">
-			</i> <span class="nav_name">SignOut</span> </a>
+            <a href="#" class="nav_link" onclick="showTab('tab-positions')">
+                <i class='bx bx-plus-circle nav_icon'></i>
+                <span class="nav_name">Add Position</span>
+            </a>
+            <a href="../logout.php" class="nav_link">
+                <i class="bx bx-log-out nav_icon"></i>
+                <span class="nav_name">SignOut</span>
+            </a>
         </div>
     </div>
 </nav>
