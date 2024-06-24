@@ -57,12 +57,16 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
+            background-color: #1e293b;
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .navbar {
+            background-color: #0d1117;
             margin-bottom: 20px;
-            background-color: #000000;
         }
         .navbar-brand {
             font-size: 1.8rem;
@@ -71,20 +75,20 @@ $conn->close();
         .container {
             max-width: 900px;
             margin: auto;
-            background-color: #fff;
+            background-color: #0d1117;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .card {
             border: none;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+            background-color: #21262d;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         .card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         }
         .card h5 {
             font-size: 1.5rem;
@@ -95,12 +99,39 @@ $conn->close();
             border: none;
             padding: 10px 20px;
             border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
         }
         .btn-primary:hover {
             background-color: #0056b3;
+            transform: scale(1.05);
         }
         .alert {
             border-radius: 10px;
+        }
+        .footer {
+            text-align: center;
+            padding: 1rem 0;
+            background-color: #0d1117;
+            color: #ffffff;
+            margin-top: auto;
+        }
+        label.list-group-item.d-flex.justify-content-between.align-items-center {
+    background: #0d1117;
+    color: white;
+}
+        .img-thumbnail {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        @media (max-width: 767px) {
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+            .container {
+                padding: 10px;
+            }
         }
     </style>
     <script>
@@ -115,8 +146,7 @@ $conn->close();
             }
             if (!selected) {
                 alert("Please select a candidate before submitting.");
-                return
-                false;
+                return false;
             }
             return true;
         }
@@ -145,15 +175,15 @@ $conn->close();
         </div>
     </nav>
     <div class="container">
-        <h2 class="my-4 text-center"><b>Vote for <?php echo htmlspecialchars($position['name']); ?></h2></b>
+        <h2 class="my-4 text-center"><b>Vote for <?php echo htmlspecialchars($position['name']); ?></b></h2>
         <?php if ($candidates_result->num_rows > 0): ?>
             <form action="submit_vote.php" method="post" onsubmit="return validateForm();">
                 <input type="hidden" name="position_id" value="<?php echo $position_id; ?>">
                 <div class="list-group">
                     <?php while ($candidate = $candidates_result->fetch_assoc()): ?>
                         <label class="list-group-item d-flex justify-content-between align-items-center">
-                        <?php if ($candidate['image_url']): ?>
-                                <img src="<?php echo htmlspecialchars($candidate['image_url']); ?>" alt="<?php echo htmlspecialchars($candidate['name']); ?>" class="img-thumbnail" style="width: 50px; height: 50px;">
+                            <?php if ($candidate['image_url']): ?>
+                                <img src="<?php echo htmlspecialchars($candidate['image_url']); ?>" alt="<?php echo htmlspecialchars($candidate['name']); ?>" class="img-thumbnail">
                             <?php endif; ?>
                             <span class="ms-2"><?php echo htmlspecialchars($candidate['name']); ?></span>
                             <input type="radio" name="candidate_id" value="<?php echo $candidate['id']; ?>" id="candidate_<?php echo $candidate['id']; ?>">
@@ -169,6 +199,9 @@ $conn->close();
                 No candidates available for this position.
             </div>
         <?php endif; ?>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 E-Voting System</p>
     </div>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
