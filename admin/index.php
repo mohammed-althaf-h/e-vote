@@ -194,15 +194,24 @@ if (!$is_admin) {
                 color: var(--white-color);
             }
         }
+        .notification {
+            position: fixed;
+            top: 3rem; /* Below the header */
+            left: 4rem;
+            z-index: 1000; /* Make sure it's above other elements */
+            display: none;
+            min-width: 300px;
+        }
     </style>
 </head>
 <body id="body-pd">
     <header class="header" id="header">
         <div class="header_toggle"> <i class='bx bx-menu' id="header-toggle"></i> </div>
-
     </header>
     <div id="container">
         <div class="content">
+            <!-- Notification Area -->
+            <div id="notification" class="notification alert"></div>
             <!-- DASHBOARD -->
             <div id="tab-dashboard" class="tab">
                 <div class="height-100 bg-light">
@@ -224,13 +233,13 @@ if (!$is_admin) {
                     <?php include 'manage_candidates.php'; ?>
                 </div>
             </div>
+            <!-- POSITIONS -->
             <div id="tab-positions" class="tab" style="display: none;">
-    <div class="height-100 bg-light">
-        <h4>Positions</h4>
-        <?php include 'add_position.php'; ?>
-    </div>
-</div>
-
+                <div class="height-100 bg-light">
+                    <h4>Positions</h4>
+                    <?php include 'add_position.php'; ?>
+                </div>
+            </div>
             <!-- TOOLS -->
             <div id="tab-tools" class="tab">
                 <div class="height-100 bg-light">
@@ -238,13 +247,14 @@ if (!$is_admin) {
                     <?php include 'view_users.php'; ?>
                 </div>
             </div>
+        </div>
+    </div>
     <div class="l-navbar" id="nav-bar">
         <?php include 'navbar.php'; ?>
     </div>
     <!-- JS RESOURCES -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    
     <script>
         document.addEventListener("DOMContentLoaded", function(event) {
             const showNavbar = (toggleId, navId, bodyId, headerId) => {
@@ -285,6 +295,17 @@ if (!$is_admin) {
                 tab.style.display = 'none';
             });
             document.getElementById(tabId).style.display = 'block';
+        }
+
+        // Function to show notification
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.className = 'notification alert alert-' + type;
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
         }
     </script>
 </body>

@@ -11,6 +11,7 @@ session_start();
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -20,35 +21,20 @@ session_start();
         }
 
         .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
             background-color: #010103;
         }
 
-        .navbar a {
+        .navbar-nav .nav-link {
             color: #ffffff;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
         }
 
-        .navbar a:hover {
+        .navbar-nav .nav-link:hover {
             text-decoration: underline;
         }
 
-        .navbar .logo {
+        .navbar-brand {
             font-size: 1.5rem;
             font-weight: 700;
-        }
-
-        .navbar ul {
-            list-style-type: none;
-            display: flex;
-            gap: 1rem;
-            padding: 0;
-            margin: 0;
-            align-items: center; /* Align items vertically centered */
         }
 
         .hero {
@@ -62,12 +48,22 @@ session_start();
             background: linear-gradient(145deg, rgba(15, 23, 42, 1) 0%, rgba(30, 41, 59, 1) 100%);
             background-image: url('https://wallpapers.com/images/featured/dark-5u7v1sbwoi6hdzsb.jpg');
             background-position: center;
-            background-size: 100% 100%;
+            background-size: cover;
         }
 
         @media (max-width: 768px) {
             .hero {
-                background-size: auto;
+                background-size: cover;
+                padding: 1rem;
+                height: 60vh;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
             }
         }
 
@@ -151,13 +147,16 @@ session_start();
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo"><a href="index.php">E-Voting System</div>
-        <div>
-            <ul>
-                <li><a href="index.php">Home</a></li>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="index.php">E-Voting System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
                 <?php if (isset($_SESSION['registerno'])): ?>
-                    <li><a href="./voting/voting.php">Vote</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./voting/voting.php">Vote</a></li>
                     <?php
                     // Include database connection
                     include 'includes/db.php';
@@ -183,25 +182,27 @@ session_start();
 
                     <?php if ($is_admin): ?>
                         <!-- Navigation items for admins -->
-                        <li><a href="./admin/">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="./admin/">Dashboard</a></li>
                     <?php endif; ?>
-                    <li class="profile">
-                        <img src="<?php echo htmlspecialchars($profile_photo); ?>" alt="Profile Photo">
-                        <div class="profile-menu">
-                            <a href="view_profile.php">My Profile</a>
+                    <li class="nav-item dropdown profile">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="<?php echo htmlspecialchars($profile_photo); ?>" alt="Profile Photo">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right profile-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="view_profile.php">My Profile</a>
                             <?php if ($is_admin): ?>
-                                <a href="./admin/">Admin Panel</a>
+                                <a class="dropdown-item" href="./admin/">Admin Panel</a>
                             <?php endif; ?>
-                            <a href="logout.php">Logout</a>
+                            <a class="dropdown-item" href="logout.php">Logout</a>
                         </div>
                     </li>
                 <?php else: ?>
                     <!-- Navigation items for non-logged-in users -->
-                    <li><a href="./auth/login.php">Login</a></li>
-                    <li><a href="./auth/register.php">Register</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./auth/login.php">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./auth/register.php">Register</a></li>
                 <?php endif; ?> 
                 <!-- Common navigation item -->
-                <li><a href="./voting/results.php">Results</a></li>
+                <li class="nav-item"><a class="nav-link" href="./voting/results.php">Results</a></li>
             </ul>
         </div>
     </nav>
@@ -211,13 +212,20 @@ session_start();
         <p>Your platform for a transparent and secure voting experience.</p>
         <div>
             <?php if(isset($_SESSION['registerno'])): ?>
-                <a href="voting/voting.php" class="btn">Go to Voting Page</a>
-                <a href="logout.php" class="btn">Logout</a>
+                <a href="voting/voting.php" class="btn btn-primary">Go to Voting Page</a>
+                <a href="logout.php" class="btn btn-secondary">Logout</a>
             <?php else: ?>
-                <a href="auth/login.php" class="btn">Login</a>
-                <a href="auth/register.php" class="btn">Register</a>
+                <a href="auth/login.php" class="btn btn-primary">Login</a>
+                <a href="auth/register.php" class="btn btn-secondary">Register</a>
             <?php endif; ?>
         </div>
     </section>
+
+    <footer class="footer">
+        <p>&copy; <?php echo date("Y"); ?> E-Voting System. All rights reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -110,7 +110,6 @@ if ($result->num_rows > 0) {
 $conn->close();
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,33 +122,35 @@ $conn->close();
 <body>
 <div class="container mt-5">
     <h2>Manage Candidates</h2>
-    <div id="notification" class="alert alert-success" style="display: none;"></div>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Candidate Number</th>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Image URL</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($candidates as $candidate): ?>
-            <tr id="candidate-<?php echo htmlspecialchars($candidate['id']); ?>">
-                <td class="candidate-registerno"><?php echo htmlspecialchars($candidate['registerno']); ?></td>
-                <td class="candidate-name"><?php echo htmlspecialchars($candidate['name']); ?></td>
-                <td class="candidate-position"><?php echo htmlspecialchars($candidate['position_name']); ?></td>
-                <td class="candidate-image-url"><?php echo htmlspecialchars($candidate['image_url']); ?></td>
-                <td>
-                    <button class="btn btn-danger delete-candidate" data-id="<?php echo htmlspecialchars($candidate['id']); ?>">Delete</button>
-                    <button class="btn btn-primary" onclick="editCandidate('<?php echo htmlspecialchars($candidate['id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['name'])); ?>', '<?php echo htmlspecialchars($candidate['position_id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['image_url'])); ?>')">Edit</button>
-                    <button class="btn btn-warning regenerate-password" data-id="<?php echo htmlspecialchars($candidate['id']); ?>">Regenerate Password</button>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div id="notification" class="alert" style="display: none;"></div>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Candidate Number</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Image URL</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($candidates as $candidate): ?>
+                <tr id="candidate-<?php echo htmlspecialchars($candidate['id']); ?>">
+                    <td class="candidate-registerno"><?php echo htmlspecialchars($candidate['registerno']); ?></td>
+                    <td class="candidate-name"><?php echo htmlspecialchars($candidate['name']); ?></td>
+                    <td class="candidate-position"><?php echo htmlspecialchars($candidate['position_name']); ?></td>
+                    <td class="candidate-image-url"><?php echo htmlspecialchars($candidate['image_url']); ?></td>
+                    <td>
+                        <button class="btn btn-danger delete-candidate" data-id="<?php echo htmlspecialchars($candidate['id']); ?>">Delete</button>
+                        <button class="btn btn-primary" onclick="editCandidate('<?php echo htmlspecialchars($candidate['id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['name'])); ?>', '<?php echo htmlspecialchars($candidate['position_id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['image_url'])); ?>')">Edit</button>
+                        <button class="btn btn-warning regenerate-password" data-id="<?php echo htmlspecialchars($candidate['id']); ?>">Regenerate Password</button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
     <div id="editForm" style="display:none;">
         <h3>Edit Candidate</h3>
@@ -182,59 +183,19 @@ $conn->close();
 <!-- jQuery and Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
 <script>
-function editCandidate(id, name, position_id, image_url) {
-    $('#edit_candidate_id').val(id);
-    $('#edit_name').val(name);
-    $('#edit_position_id').val(position_id);
-    $('#edit_image_url').val(image_url);
-    $('#editForm').show();
-}
-
-function showNotification(message, type = 'success') {
-    var notification = $('#notification');
-    notification.removeClass('alert-success alert-danger').addClass('alert-' + type);
-    notification.text(message).show();
-    setTimeout(function() {
-        notification.fadeOut();
-    }, 3000);
-}
-
 $(document).ready(function() {
-    $('.delete-candidate').click(function() {
-        var candidate_id = $(this).data('id');
-        if (confirm('Are you sure you want to delete this candidate?')) {
-            $.ajax({
-                type: 'POST',
-                url: 'manage_candidates.php',
-                data: {
-                    candidate_id: candidate_id,
-                    delete_candidate: true
-                },
-                success: function(response) {
-                    var res = JSON.parse(response);
-                    if (res.success) {
-                        showNotification('Candidate deleted successfully');
-                        $('#candidate-' + candidate_id).remove();
-                    } else {
-                        showNotification('Error deleting candidate: ' + res.error, 'danger');
-                    }
-                },
-                error: function() {
-                    showNotification('Error deleting candidate', 'danger');
-                }
-            });
-        }
+    $('.edit-candidate').click(function() {
+        // Code to handle editing a candidate
     });
 
-    $('#editCandidateForm').submit(function(e) {
-        e.preventDefault();
+    $('#editForm').submit(function(event) {
+        event.preventDefault();
         var candidate_id = $('#edit_candidate_id').val();
         var name = $('#edit_name').val();
         var position_id = $('#edit_position_id').val();
         var image_url = $('#edit_image_url').val();
-        
+
         $.ajax({
             type: 'POST',
             url: 'manage_candidates.php',
@@ -246,7 +207,8 @@ $(document).ready(function() {
                 edit_candidate: true
             },
             success: function(response) {
-                showNotification('Candidate updated successfully');
+                console.log(response); // Debugging output
+                showNotification('Candidate updated successfully', 'success');
                 var row = $('#candidate-' + candidate_id);
                 row.find('.candidate-name').text(name);
                 row.find('.candidate-position').text($('#edit_position_id option:selected').text());
@@ -269,9 +231,10 @@ $(document).ready(function() {
                 regenerate_password: true
             },
             success: function(response) {
+                console.log(response); // Debugging output
                 var res = JSON.parse(response);
                 if (res.success) {
-                    showNotification('Password regenerated successfully. New Password: ' + res.password);
+                    showNotification('Password regenerated successfully. New Password: ' + res.password, 'success');
                 } else {
                     showNotification('Error regenerating password', 'danger');
                 }

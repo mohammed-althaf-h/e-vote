@@ -31,7 +31,7 @@ $admin_check_stmt->close();
 
 <nav class="nav">
     <div>
-        <a href="../index.php" class="nav_logo">
+        <a href="../home.php" class="nav_logo">
             <i class='bx bx-layer nav_logo-icon'></i>
             <span class="nav_logo-name">My Admin</span>
         </a>

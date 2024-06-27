@@ -67,39 +67,41 @@ $conn->close();
     <div class="container mt-5">
         <h2>View Users</h2>
         <div id="notification" class="alert alert-success" style="display: none;"></div>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Register Number</th>
-                    <th>Email</th>
-                    <th>Verified</th>
-                    <th>Eligible</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($users as $user): ?>
-                <tr id="user-<?php echo htmlspecialchars($user['registerno']); ?>">
-                    <td><?php echo htmlspecialchars($user['registerno']); ?></td>
-                    <td><?php echo htmlspecialchars($user['email']); ?></td>
-                    <td class="user-verified"><?php echo $user['verified'] ? 'Yes' : 'No'; ?></td>
-                    <td class="user-eligible"><?php echo $user['eligible'] ? 'Yes' : 'No'; ?></td>
-                    <td>
-                        <form class="userForm" data-registerno="<?php echo htmlspecialchars($user['registerno']); ?>">
-                            <input type="hidden" name="verified" value="<?php echo $user['verified']; ?>">
-                            <input type="hidden" name="eligible" value="<?php echo $user['eligible']; ?>">
-                            <button type="button" class="btn btn-secondary change-verification">
-                                <?php echo $user['verified'] ? 'Unverified' : 'Set Verified'; ?>
-                            </button>
-                            <button type="button" class="btn btn-secondary change-eligibility">
-                                <?php echo $user['eligible'] ? 'Set Not Eligible' : 'Set Eligible'; ?>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Register Number</th>
+                        <th>Email</th>
+                        <th>Verified</th>
+                        <th>Eligible</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($users as $user): ?>
+                    <tr id="user-<?php echo htmlspecialchars($user['registerno']); ?>">
+                        <td><?php echo htmlspecialchars($user['registerno']); ?></td>
+                        <td><?php echo htmlspecialchars($user['email']); ?></td>
+                        <td class="user-verified"><?php echo $user['verified'] ? 'Yes' : 'No'; ?></td>
+                        <td class="user-eligible"><?php echo $user['eligible'] ? 'Yes' : 'No'; ?></td>
+                        <td>
+                            <form class="userForm" data-registerno="<?php echo htmlspecialchars($user['registerno']); ?>">
+                                <input type="hidden" name="verified" value="<?php echo $user['verified']; ?>">
+                                <input type="hidden" name="eligible" value="<?php echo $user['eligible']; ?>">
+                                <button type="button" class="btn btn-secondary btn-sm change-verification">
+                                    <?php echo $user['verified'] ? 'Unverified' : 'Set Verified'; ?>
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm change-eligibility">
+                                    <?php echo $user['eligible'] ? 'Set Not Eligible' : 'Set Eligible'; ?>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
