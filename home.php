@@ -7,7 +7,7 @@ if (!isset($_SESSION['registerno'])) {
 }
 
 include 'includes/db.php';
-
+//profile photo
 $registerno = $_SESSION['registerno'];
 $sql_user = "SELECT name, profile_photo FROM users WHERE registerno = ?";
 $stmt_user = $conn->prepare($sql_user);
@@ -16,10 +16,10 @@ $stmt_user->execute();
 $result_user = $stmt_user->get_result();
 $user = $result_user->fetch_assoc();
 $stmt_user->close();
-
+//manifesto/campaign
 $sql_candidates = "SELECT id, name, campaign_details, manifesto FROM candidates";
 $result_candidates = $conn->query($sql_candidates);
-
+//admin
 $is_admin = false;
 $sql_admin = "SELECT isadmin FROM users WHERE registerno = ?";
 $stmt_admin = $conn->prepare($sql_admin);
