@@ -143,7 +143,7 @@ $conn->close();
                     <td class="candidate-image-url"><?php echo htmlspecialchars($candidate['image_url']); ?></td>
                     <td>
                         <button class="btn btn-danger delete-candidate" data-id="<?php echo htmlspecialchars($candidate['id']); ?>">Delete</button>
-                        <button class="btn btn-primary" onclick="editCandidate('<?php echo htmlspecialchars($candidate['id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['name'])); ?>', '<?php echo htmlspecialchars($candidate['position_id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['image_url'])); ?>')">Edit</button>
+                        <!-- <button class="btn btn-primary" onclick="editCandidate('<?php echo htmlspecialchars($candidate['id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['name'])); ?>', '<?php echo htmlspecialchars($candidate['position_id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['image_url'])); ?>')">Edit</button> -->
                         <button class="btn btn-warning regenerate-password" data-id="<?php echo htmlspecialchars($candidate['id']); ?>">Regenerate Password</button>
                     </td>
                 </tr>
