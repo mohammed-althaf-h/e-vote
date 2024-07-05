@@ -297,3 +297,4 @@ function editCandidate(id, name, position_id, image_url) {
 </script>
 </body>
 </html>
+lol
