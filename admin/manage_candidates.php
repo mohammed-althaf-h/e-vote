@@ -221,6 +221,7 @@ $(document).ready(function() {
         });
     });
 
+    // Regenerate password
     $('.regenerate-password').click(function() {
         var candidate_id = $(this).data('id');
         $.ajax({
@@ -244,7 +245,55 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Delete candidate
+    $('.delete-candidate').click(function() {
+        if (!confirm('Are you sure you want to delete this candidate?')) {
+            return;
+        }
+        var candidate_id = $(this).data('id');
+        $.ajax({
+            type: 'POST',
+            url: 'manage_candidates.php',
+            data: {
+                candidate_id: candidate_id,
+                delete_candidate: true
+            },
+            success: function(response) {
+                console.log(response); // Debugging output
+                var res = JSON.parse(response);
+                if (res.success) {
+                    showNotification('Candidate deleted successfully', 'success');
+                    $('#candidate-' + candidate_id).remove();
+                } else {
+                    showNotification('Error deleting candidate', 'danger');
+                }
+            },
+            error: function() {
+                showNotification('Error deleting candidate', 'danger');
+            }
+        });
+    });
 });
+
+function showNotification(message, type) {
+    var notification = $('#notification');
+    notification.removeClass();
+    notification.addClass('alert alert-' + type);
+    notification.text(message);
+    notification.show();
+    setTimeout(function() {
+        notification.hide();
+    }, 3000);
+}
+
+function editCandidate(id, name, position_id, image_url) {
+    $('#edit_candidate_id').val(id);
+    $('#edit_name').val(name);
+    $('#edit_position_id').val(position_id);
+    $('#edit_image_url').val(image_url);
+    $('#editForm').show();
+}
 </script>
 </body>
 </html>
