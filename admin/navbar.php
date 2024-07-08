@@ -41,15 +41,15 @@ $admin_check_stmt->close();
                 <span class="nav_name">Dashboard</span>
             </a>
             <a href="#" class="nav_link" onclick="showTab('tab-data')">
-                <i class='bx bx-folder nav_icon'></i>
+                <i class='bx bx-folder-plus nav_icon'></i>
                 <span class="nav_name">Add Candidates</span>
             </a>
             <a href="#" class="nav_link" onclick="showTab('tab-ad')">
-                <i class='bx bx-message-square-detail nav_icon'></i>
+                <i class='bx bx-edit nav_icon'></i>
                 <span class="nav_name">Manage Candidates</span>
             </a>
             <a href="#" class="nav_link" onclick="showTab('tab-tools')">
-                <i class='bx bx-wrench nav_icon'></i>
+                <i class='bx bx-user nav_icon'></i>
                 <span class="nav_name">View Users</span>
             </a>
             <a href="#" class="nav_link" onclick="showTab('tab-positions')">
@@ -57,9 +57,15 @@ $admin_check_stmt->close();
                 <span class="nav_name">Add Position</span>
             </a>
             <a href="../logout.php" class="nav_link">
-                <i class="bx bx-log-out nav_icon"></i>
-                <span class="nav_name">SignOut</span>
+                <i class='bx bx-log-out nav_icon'></i>
+                <span class="nav_name">Sign Out</span>
             </a>
         </div>
     </div>
 </nav>
+
+<script>
+    function showTab(tabId) {
+        // Your JavaScript to handle tab switching
+    }
+</script>
