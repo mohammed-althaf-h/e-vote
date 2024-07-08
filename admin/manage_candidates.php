@@ -118,6 +118,11 @@ $conn->close();
     <title>Manage Candidates</title>
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+       .alert{
+        z-index: 1000;
+       }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
