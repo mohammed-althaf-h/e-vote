@@ -198,9 +198,12 @@ if (!$is_admin) {
             position: fixed;
             top: 3rem; /* Below the header */
             left: 4rem;
-            z-index: 2000; /* Make sure it's above other elements */
+            z-index: -999; /* Make sure it's above other elements */
             display: none;
             min-width: 300px;
+        }
+        .alert{
+            z-index: 1000;
         }
     </style>
 </head>
