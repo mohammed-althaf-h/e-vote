@@ -7,7 +7,9 @@ include '../includes/csrf.php'; // Include the CSRF functions
 if (isset($_SESSION['registerno'])) {
     if ($_SESSION['isadmin'] == 1) {
         header("Location: ../admin/");
-    } else {
+    }elseif ($row['iscand'] == 1) {
+        header("Location: /candidate");
+    }else {
         header("Location: ../home.php");
     }
     exit();
@@ -37,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
             if ($row['isadmin'] == 1) {
                 header("Location: ../admin/");
             }elseif ($row['iscand'] == 1) {
-                header("Location: ../candidate.php");
+                header("Location: /candidate");
             } else {
                 header("Location: ../index.php");
             }

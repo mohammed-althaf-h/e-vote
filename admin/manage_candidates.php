@@ -143,7 +143,7 @@ $conn->close();
                     <td class="candidate-image-url"><?php echo htmlspecialchars($candidate['image_url']); ?></td>
                     <td>
                         <button class="btn btn-danger delete-candidate" data-id="<?php echo htmlspecialchars($candidate['id']); ?>">Delete</button>
-                        <!-- <button class="btn btn-primary" onclick="editCandidate('<?php echo htmlspecialchars($candidate['id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['name'])); ?>', '<?php echo htmlspecialchars($candidate['position_id']); ?>', '<?php echo htmlspecialchars(addslashes($candidate['image_url'])); ?>')">Edit</button> -->
+                        <button class="btn btn-primary edit-candidate" data-id="<?php echo htmlspecialchars($candidate['id']); ?>" data-name="<?php echo htmlspecialchars($candidate['name']); ?>" data-position-id="<?php echo htmlspecialchars($candidate['position_id']); ?>" data-image-url="<?php echo htmlspecialchars($candidate['image_url']); ?>">Edit</button>
                         <button class="btn btn-warning regenerate-password" data-id="<?php echo htmlspecialchars($candidate['id']); ?>">Regenerate Password</button>
                     </td>
                 </tr>
@@ -185,8 +185,13 @@ $conn->close();
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script>
 $(document).ready(function() {
+    // Edit candidate
     $('.edit-candidate').click(function() {
-        // Code to handle editing a candidate
+        var candidate_id = $(this).data('id');
+        var name = $(this).data('name');
+        var position_id = $(this).data('position-id');
+        var image_url = $(this).data('image-url');
+        editCandidate(candidate_id, name, position_id, image_url);
     });
 
     $('#editForm').submit(function(event) {
