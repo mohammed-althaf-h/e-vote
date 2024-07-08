@@ -110,12 +110,14 @@ $conn->close();
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
 <script>
-function showNotification(message, type = 'success') {
+function showNotification(message, type) {
     var notification = $('#notification');
-    notification.removeClass('alert-success alert-danger').addClass('alert-' + type);
-    notification.text(message).show();
+    notification.removeClass();
+    notification.addClass('alert alert-' + type);
+    notification.text(message);
+    notification.show();
     setTimeout(function() {
-        notification.fadeOut();
+        notification.hide();
     }, 3000);
 }
 
@@ -131,7 +133,7 @@ $(document).ready(function() {
             success: function(response) {
                 var res = JSON.parse(response);
                 if (res.success) {
-                    showNotification('Candidate added successfully. Registration Number: ' + res.registerno + ' Password: ' + res.password);
+                    showNotification('Candidate added successfully. Registration Number: ' + res.registerno + ' Password: ' + res.password,'success');
                     $('#addCandidateForm')[0].reset();
                 } else {
                     showNotification('Error adding candidate: ' + res.error, 'danger');
