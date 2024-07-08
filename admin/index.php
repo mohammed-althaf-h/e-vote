@@ -295,52 +295,8 @@ if (!$is_admin) {
                 tab.style.display = 'none';
             });
             document.getElementById(tabId).style.display = 'block';
-                        // Fetch latest candidates if the manage candidates tab is selected
-                        if (tabId === 'tab-ad') {
-                fetchCandidates();
-            }
+            
         }
-
-        // Fetch latest candidates and update the table
-        function fetchCandidates() {
-            $.ajax({
-                url: 'fetch_candidates.php',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    const tbody = $('#tab-ad tbody');
-                    tbody.empty(); // Clear existing rows
-                    data.forEach(candidate => {
-                        const row = `<tr id="candidate-${candidate.id}">
-                            <td class="candidate-registerno">${candidate.registerno}</td>
-                            <td class="candidate-name">${candidate.name}</td>
-                            <td class="candidate-position">${candidate.position_name}</td>
-                            <td class="candidate-image-url">${candidate.image_url}</td>
-                            <td>
-                                <button class="btn btn-danger delete-candidate" data-id="${candidate.id}">Delete</button>
-                                <button class="btn btn-primary edit-candidate" data-id="${candidate.id}" data-name="${candidate.name}" data-position-id="${candidate.position_id}" data-image-url="${candidate.image_url}">Edit</button>
-                                <button class="btn btn-warning regenerate-password" data-id="${candidate.id}">Regenerate Password</button>
-                            </td>
-                        </tr>`;
-                        tbody.append(row);
-                    });
-
-                    // Rebind event handlers for the new buttons
-                    bindEventHandlers();
-                },
-                error: function() {
-                    showNotification('Error fetching candidates', 'danger');
-                }
-            });
-        }
- // Rebind event handlers for the dynamic content
- function bindEventHandlers() {
-            // Existing event handlers for edit, delete, and regenerate password buttons...
-        }
-
-        // Bind event handlers on initial load
-        bindEventHandlers();
-    
 
         // Function to show notification
         function showNotification(message, type) {
