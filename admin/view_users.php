@@ -10,7 +10,7 @@ if (!isset($_SESSION['registerno']) || $_SESSION['isadmin'] != 1) {
 // Include database connection
 include '../includes/db.php';
 
-// Handle AJAX requests for eligibility change
+// Handle AJAX requests
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['change_eligibility'])) {
         $registerno = $_POST['registerno'];
@@ -24,8 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo json_encode(['success' => true, 'new_eligibility' => $new_eligibility]);
         exit();
     }
-    
-    // Handle AJAX requests for verification change
+
     if (isset($_POST['change_verification'])) {
         $registerno = $_POST['registerno'];
         $new_verification = $_POST['verified'] ? 0 : 1;
@@ -36,6 +35,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
         
         echo json_encode(['success' => true, 'new_verification' => $new_verification]);
+        exit();
+    }
+
+    // Handle delete user
+    if (isset($_POST['delete_user'])) {
+        $registerno = $_POST['registerno'];
+        $sql = "DELETE FROM users WHERE registerno = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $registerno);
+        $stmt->execute();
+        $stmt->close();
+        
+        echo json_encode(['success' => true]);
         exit();
     }
 }
@@ -95,6 +107,7 @@ $conn->close();
                                 <button type="button" class="btn btn-secondary btn-sm change-eligibility">
                                     <?php echo $user['eligible'] ? 'Set Not Eligible' : 'Set Eligible'; ?>
                                 </button>
+                                <button type="button" class="btn btn-danger btn-sm delete-user">Delete</button>
                             </form>
                         </td>
                     </tr>
@@ -168,6 +181,37 @@ $conn->close();
                 },
                 error: function() {
                     showNotification('Error changing eligibility status', 'danger');
+                }
+            });
+        });
+
+        // Handle user deletion
+        $('.delete-user').click(function() {
+            if (!confirm('Are you sure you want to delete this user?')) {
+                return;
+            }
+
+            var form = $(this).closest('form');
+            var registerno = form.data('registerno');
+            
+            $.ajax({
+                type: 'POST',
+                url: 'view_users.php',
+                data: {
+                    registerno: registerno,
+                    delete_user: true
+                },
+                success: function(response) {
+                    var res = JSON.parse(response);
+                    if (res.success) {
+                        $('#user-' + registerno).remove();
+                        showNotification('User deleted successfully');
+                    } else {
+                        showNotification('Error deleting user', 'danger');
+                    }
+                },
+                error: function() {
+                    showNotification('Error deleting user', 'danger');
                 }
             });
         });
