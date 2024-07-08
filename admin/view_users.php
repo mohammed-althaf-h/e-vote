@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Retrieve users from the database
-$sql = "SELECT registerno, email, verified, eligible, iscand FROM users WHERE iscand != 1";
+$sql = "SELECT registerno, email, verified, eligible, iscand, isadmin FROM users WHERE iscand != 1 AND isadmin != 1";
 $result = $conn->query($sql);
 
 $users = array();
