@@ -241,7 +241,7 @@ if (!$is_admin) {
                 </div>
             </div>
             <!-- TOOLS -->
-            <div id="tab-tools" class="tab">
+            <div id="tab-tools" class="tab" style="display: none;">
                 <div class="height-100 bg-light">
                     <h4>Tools</h4>
                     <?php include 'view_users.php'; ?>
