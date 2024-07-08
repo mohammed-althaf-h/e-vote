@@ -230,7 +230,7 @@ if (!$is_admin) {
             <div id="tab-ad" class="tab" style="display: none;">
                 <div class="height-100 bg-light">
                     <h4>Advertisements</h4>
-                    <?php include 'manage_candidates.php'; ?>
+                    <div id="manage-candidates"></div>
                 </div>
             </div>
             <!-- POSITIONS -->
@@ -295,7 +295,30 @@ if (!$is_admin) {
                 tab.style.display = 'none';
             });
             document.getElementById(tabId).style.display = 'block';
-            
+                        // Fetch latest candidates if the manage candidates tab is selected
+            if (tabId === 'tab-ad') {
+                loadManageCandidates();
+            }
+        }
+
+      // Function to load Manage Candidates content
+        function loadManageCandidates() {
+            $.ajax({
+                url: 'manage_candidates.php',
+                method: 'GET',
+                success: function(data) {
+                    $('#tab-ad').html(data);
+                    initializeManageCandidates();
+                },
+                error: function() {
+                    showNotification('Error loading candidates', 'danger');
+                }
+            });
+        }
+
+        // Function to initialize Manage Candidates functionalities
+        function initializeManageCandidates() {
+            // Existing code to initialize manage candidates functionalities
         }
 
         // Function to show notification
@@ -308,6 +331,22 @@ if (!$is_admin) {
                 notification.style.display = 'none';
             }, 3000);
         }
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if the tab-ad div should be displayed
+            const tabAd = document.getElementById('tab-ad');
+            if (tabAd) {
+                // Fetch the content of manage_candidates.php
+                fetch('manage_candidates.php')
+                    .then(response => response.text())
+                    .then(data => {
+                        // Insert the fetched content into the manage-candidates div
+                        document.getElementById('manage-candidates').innerHTML = data;
+                        // Display the tab-ad div
+                        tabAd.style.display = 'block';
+                    })
+                    .catch(error => console.error('Error fetching the content:', error));
+            }
+        });
     </script>
 </body>
 </html>
